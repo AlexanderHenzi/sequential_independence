@@ -8,7 +8,7 @@ theme_set(theme_bw(base_size = 10))
 colpal <- colorblind_pal()(8)[-5][c(2, 3, 4, 6, 1, 5)]
 
 # load data, functions
-load("simulation_results.rda")
+load("data/simulation_results.rda")
 
 # parameters
 alpha0 <- 0.05
@@ -24,7 +24,7 @@ plot_data <- data %>%
     sim != "null" &
     alpha == alpha0 &
     ((method %in% c("bet", "ks") & combination == "pm") | 
-       (method %in% c("simple", "sinkhorn") & combination != "bo"))
+       (method %in% c("simple", "sinkhorn")))
   ) %>%
   mutate(
     method = paste0(method, "_",  combination),
