@@ -131,7 +131,6 @@ pdf("illustration_simple_sinkhorn.pdf", width = 8, height = 3.5)
 print(simple_sinkhorn)
 dev.off()
 
-
 # density plots
 nn <- 500
 simple <- srt_simple(X = x[seq_len(nn)], Y = y[seq_len(nn)], d = d, n0 = n0)
@@ -221,3 +220,79 @@ densities <- ggarrange(
 pdf(file = "illustration_densities.pdf", width = 11, height = 3)
 print(densities)
 dev.off()
+
+# illustration of binning and counting
+set.seed(123)
+k <- 6
+R <- pmin(0.9, pmax(0.1, runif(k)))
+S <- pmin(0.9, pmax(0.1, runif(k)))
+points_data <- tibble(
+  ds = rep(c("d = 2", "d = 4"), each = k),
+  R = rep(R, 2),
+  S = rep(S, 2),
+  time_order = rep(factor(seq_len(k)), 2),
+  labels2 = rep(paste0("paste('(',", paste0("R[", seq_len(k), "])")), 2),
+  labels3 = rep("       , ", 2 * k),
+  labels4 = rep(paste0("~~~~~~~~~~~~~paste(S[", seq_len(k), "], ')')"), 2),
+)
+
+count_grid_cells <- ggplot(points_data) +
+  geom_text(
+    aes(x = R, y = S, color = time_order, label = labels2),
+    cex = 3,
+    parse = TRUE
+  ) +
+  geom_text(aes(x = R, y = S, color = time_order, label = labels3), cex = 3) +
+  geom_text(
+    aes(x = R, y = S, color = time_order, label = labels4),
+    cex = 3,
+    parse = TRUE
+  ) +
+  facet_grid(cols = vars(ds)) +
+  geom_segment(
+    data = tibble(
+      ds = c("d = 2", rep("d = 4", 3)),
+      yend = c(0.5, 0.25, 0.5, 0.75),
+      y = yend,
+      x = rep(0, 4),
+      xend = rep(1, 4)
+    ),
+    aes(x = x, y = y, xend = xend, yend = yend),
+    color = "darkgray"
+  ) +
+  geom_segment(
+    data = tibble(
+      ds = c("d = 2", rep("d = 4", 3)),
+      xend = c(0.5, 0.25, 0.5, 0.75),
+      x = xend,
+      y = rep(0, 4),
+      yend = rep(1, 4)
+    ),
+    aes(x = x, y = y, xend = xend, yend = yend),
+    color = "darkgray"
+  ) +
+  geom_point(aes(x = R + 0.025, y = S + 0.0375, color = time_order)) +
+  geom_rect(
+    data = tibble(
+      xmin = c(0, 0),
+      xmax = c(1, 1),
+      ymin = c(0, 0),
+      ymax = c(1, 1)
+    ),
+    aes(xmin = xmin, ymin = ymin, xmax = xmax, ymax = ymax),
+    fill = "transparent",
+    color = "black"
+  ) +
+  coord_cartesian(xlim = c(0, 1), ylim = c(0, 1)) +
+  scale_color_manual(values = colpal) +
+  labs(x = element_blank(), y = element_blank()) +
+  theme(
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    legend.position = "none"
+  )
+
+pdf("count_grid_cells.pdf", width = 8, height = 4.25)
+print(count_grid_cells)
+dev.off()
+

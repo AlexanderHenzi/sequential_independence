@@ -22,5 +22,7 @@ Plots and tables are generated with the following files: `plot_simulations.R`,
 `illustration_theoretical_properties.R` and `illustration_sequential_BET`
 generate the figures that illustrate the methods; `plot_simulation_results.R`
 gives the rejection rates for the sequential tests; and `compare_against_bet.R`
-the table for the comparison with the BET.
+the table for the comparison with the BET. The illustration on real data is
+reproduced with `boeoegg.R`, with data from 
+https://github.com/philshem/Sechselaeuten-data.
 
