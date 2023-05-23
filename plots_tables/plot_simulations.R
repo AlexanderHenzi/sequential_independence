@@ -2,7 +2,7 @@
 library(tidyverse)
 
 # functions
-source("final_code/simulation_examples.R")
+source("functions/simulation_examples.R")
 
 # plot options
 theme_set(theme_bw(base_size = 12))

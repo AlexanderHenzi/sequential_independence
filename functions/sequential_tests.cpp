@@ -588,6 +588,10 @@ List sequential_ks(
       for (int k = xp[0]; k < xp[1]; k++) {
         for (int l = yp[0]; l < yp[1]; l++) {
           err(k,l) += add_to_err;
+        }
+      }
+      for (int k = 0; k < Nx; k++) {
+        for (int l = 0; l < Ny; l++) {
           if (err(k,l) > max_plus) {
             max_plus = err(k,l);
             g_plus = {xgrid[k],ygrid[l]};

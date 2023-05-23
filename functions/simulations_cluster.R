@@ -16,11 +16,13 @@ set.seed(id)
 out <- sim_all(nmax, l = l)
 for (j in seq_along(out)) {
   df <- out[[j]]
+  xgrid <- seq(min(df$x), max(df$x), 0.025)
+  ygrid <- seq(min(df$y), max(df$y), 0.025)
   outputs <- list(
     simple = srt_simple(df$x, df$y),
     sinkhorn = srt_sinkhorn(df$x, df$y),
     bet = srt_bet(df$x, df$y),
-    ks = seq_ks(df$x, df$y, seq(-10, 10, 0.025), seq(-10, 10, 0.025))
+    ks = seq_ks(df$x, df$y, xgrid, ygrid)
   )
   martingales_pm <- lapply(
     outputs,
@@ -42,3 +44,4 @@ for (j in seq_along(out)) {
 
 # export results
 save(list = "out", file = paste0("independence_", id, ".rda"))
+

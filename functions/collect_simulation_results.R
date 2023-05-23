@@ -30,7 +30,7 @@ for (i in seq_len(M)) {
 }
 close(pb)
 results <- do.call(rbind, results)
-save(list = "results", file = "simulation_results.rda")
+save(list = "results", file = "simulation_results_new.rda")
 
 # get results for comparison to non-sequential BET
 ns <- c(128, 256, 512)
