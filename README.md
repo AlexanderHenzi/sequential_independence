@@ -2,6 +2,7 @@
 
 This repository contains replication material for the preprint
 
+Alexander Henzi and Michael Law. "A Rank-Based Sequential Test of Independence" arXiv preprint arXiv:2305.13818 (2023).
 
 The files `sequential_tests.cpp` and `r_wrappers.R` contain the functions to
 run the tests. They additionally contain another method for achieving uniform
