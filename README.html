@@ -361,6 +361,8 @@ display: none;
 <div id="a-rank-based-sequential-test-of-independence" class="section level1">
 <h1>A Rank-Based Sequential Test of Independence</h1>
 <p>This repository contains replication material for the preprint</p>
+<p>Alexander Henzi and Michael Law. “A Rank-Based Sequential Test of
+Independence” arXiv preprint arXiv:2305.13818 (2023).</p>
 <p>The files <code>sequential_tests.cpp</code> and
 <code>r_wrappers.R</code> contain the functions to run the tests. They
 additionally contain another method for achieving uniform marginals
@@ -377,6 +379,9 @@ Rejection rates for the BET are obtained from
 <code>simulations_BET.R</code>. The file <code>ville_gap.R</code>
 estimates the corrected rejection thresholds when stopping at a given
 sample size N, and produces the corresponding figure in the paper.</p>
+<p>Simulations for the <a href="https://arxiv.org/abs/2212.07383">sequential kernelized
+independence test</a> are run in Python. Details can be found in the
+separate README in the directory.</p>
 <p>Plots and tables are generated with the following files:
 <code>plot_simulations.R</code>,
 <code>illustration_theoretical_properties.R</code> and
@@ -384,7 +389,11 @@ sample size N, and produces the corresponding figure in the paper.</p>
 illustrate the methods; <code>plot_simulation_results.R</code> gives the
 rejection rates for the sequential tests; and
 <code>compare_against_bet.R</code> the table for the comparison with the
-BET.</p>
+BET. The illustration on real data is reproduced with
+<code>boeoegg.R</code>, with data from <a href="https://github.com/philshem/Sechselaeuten-data" class="uri">https://github.com/philshem/Sechselaeuten-data</a>. Data for
+reproducing the simulation results is in
+<code>simulation_results.rda</code> and described in
+<code>plot_simulation_results.R</code>.</p>
 </div>
 
 

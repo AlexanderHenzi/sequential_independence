@@ -190,11 +190,10 @@ seq_ks <- function(X, Y, xgrid, ygrid) {
 #' @param output output of one of the functions above in this file.
 #' @param combination combination method for the methods based on binning. There
 #'     are three options: "mean_product" takes the average over the test 
-#'     martingales for the different grid sizes. "product_mean" first averages
-#'     the factors of each martingale and then computes the product. A constant
-#'     martingale (1) is included. "both" takes the mean of the two martingales
-#'     constructed with these methods. This parameter has no influence for the
-#'     output of seq_ks or srt_bet.
+#'     martingales for the different grid sizes (eta = 1 in the article).
+#'     "product_mean" (eta = 0 in the article) first averages the factors of
+#'     each martingale and then computes the product. A constant martingale (1)
+#'     is included.
 #'
 #' @return 
 #' A numeric vector, the test martingale.
@@ -207,11 +206,6 @@ get_martingale <- function(
   } else if (type == "srt_bet") {
     groups <- output[[length(output)]]
     ngroups <- groups[length(groups)]
-    # w0 <- 1 / ngroups
-    # ls <- rle(groups)$length
-    # w <- w0 * rep(1 / ls, times = ls)
-    # out <- cumprod(output[[1]] * w[1])
-    # for (j in 2:length(w)) out <- out + cumprod(output[[j]]) * w[j]
     w <- 1 / (length(output) - 1)
     out <- cumprod(output[[1]]) * w
     if (length(output) > 1) {
@@ -230,17 +224,6 @@ get_martingale <- function(
       out <- rep(1, length(output[[1]])) * w0
       for (j in seq_len(nd)) out <- out + output[[j]] * w0
       out <- cumprod(out)
-    } else if (identical(combination, "both")) {
-      w0_a <- 1 / nd
-      out_a <- cumprod(output[[1]]) * w0_a
-      if (nd > 1) {
-        for (j in 2:nd) out_a <- out_a + cumprod(output[[j]]) * w0_a
-      }
-      w0_b <- 1 / (nd + 1)
-      out_b <- rep(1, length(output[[1]])) * w0_b
-      for (j in seq_len(nd)) out_b <- out_b + output[[j]] * w0_b
-      out_b <- cumprod(out_b)
-      out <- 0.5 * out_a + 0.5 * out_b
     }
   }
   out

@@ -64,7 +64,8 @@ data_plot <- data %>%
       most_recent = rep(TRUE, 3),
       var = c("Burning time", "Precipitation", "Temperature"),
       # var = c("Burning time (s)", "Precipitation (mm)", "Temperature (°C)"),
-      pch = c(NA, "?", "?"),
+      # pch = c(NA, "?", "?"),
+      pch = c(NA, NA, NA),
       Year = rep(2023, 3),
       y = c(2000, 125, 19)
     ),
@@ -137,7 +138,8 @@ martingales_plot <- martingales %>%
   ) +
   scale_color_manual(values = colpal[1:2]) +
   scale_linetype_manual(values = c(1, 5)) +
-  theme(legend.position = c(0.5, 0.85)) +
+  # theme(legend.position = c(0.5, 0.85)) +
+  theme(legend.position = "none") +
   labs(
     x = "Year",
     y = "Test Martingales",

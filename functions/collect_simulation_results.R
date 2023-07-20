@@ -13,6 +13,8 @@ pb <- txtProgressBar(max = M)
 results <- vector("list", M)
 for (i in seq_len(M)) {
   setTxtProgressBar(pb, i)
+  
+  # for methods implemented in R
   load(paste0("independence_", i, ".rda"))
   tmp <- do.call(rbind, out) %>%
     unnest(cols = c(pm, mp)) %>%
@@ -26,11 +28,36 @@ for (i in seq_len(M)) {
       .groups = "drop"
     ) %>%
     unnest(rej)
-  results[[i]] <- tmp
+  
+  # for kernelized test
+  out1 <- read.csv(
+    paste0("simulations_aGRAPA_20_", i, ".csv"),
+    sep = ",",
+    header = TRUE
+  )
+  out2 <- read.csv(
+    paste0("simulations_ONS_20_", i, ".csv"),
+    sep = ",",
+    header = TRUE
+  )
+  
+  # find rejection times; multiply by 2 because observations are in pairs
+  out <- rbind(out1, out2) %>%
+    group_by(method, sim, l) %>%
+    summarise(
+      rej = list(tibble(
+        alpha = alpha,
+        pm = sapply(alpha, function(a) get_first_rejection(martingale, 1/a)) * 2,
+        mp = sapply(alpha, function(a) get_first_rejection(martingale, 1/a)) * 2,
+      )),
+      .groups = "drop"
+    ) %>%
+    unnest(rej)
+  results[[i]] <- rbind(out, tmp)
 }
 close(pb)
 results <- do.call(rbind, results)
-save(list = "results", file = "simulation_results_new.rda")
+save(list = "results", file = "simulation_results.rda")
 
 # get results for comparison to non-sequential BET
 ns <- c(128, 256, 512)
