@@ -22,7 +22,7 @@ load("data/simulation_results.rda")
 #     "ks" for the betting-approach with the Kolmogorov-Smirnov distance
 #       by Shekhar & Ramdas (SR in the article)
 #     "PR_ONS", "PR_aGRAPA" for the sequential kernelized independence test
-#       by Podpokaev & Ramdas (PR in the article) with ONS/aGRAPA method
+#       by Podpokaev & et al. (PR in the article) with ONS/aGRAPA method
 # - sim: simulation examples from article and supplement. includes a further
 #     example "null", which is under independence and for testing purposes
 # - l: noise level
