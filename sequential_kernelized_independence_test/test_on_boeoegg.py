@@ -47,7 +47,7 @@ def seq_kern_independence(X: np.ndarray,
     # container for test martingale
     n = X.size
     n_pairs = n//2
-    test_martingale = np.ones(n_pairs)
+    test_martingale = np.ones(n_pairs + 1)
 
     # specificatinos of the tester
     tester = SeqIndTester()
@@ -80,32 +80,18 @@ def seq_kern_independence(X: np.ndarray,
         
     
 # import the data from csv file
-
-task_id = os.getenv('SLURM_ARRAY_TASK_ID')
-l = np.ceil(int(task_id)/1000)
-in_path = 'simulation_examples_' + task_id + '.csv'
-df = pd.read_csv(in_path, sep = ',', na_values = [])
-
-# run the test and export the result
-
+df = pd.read_csv('boeoegg_april.csv', sep = ';')
 n0 = 20
-lmbd_type = os.getenv('lmbd_type')
+X = df.iloc[:,0].values
+Y = df.iloc[:,1].values
 
-sims = df['sim'].unique()
-nsims = sims.size
-out = []
+for n0 in range(2, 29, 2):
+    ons = seq_kern_independence(X, Y, 'ONS', n0)
+    agrapa = seq_kern_independence(X, Y, 'aGRAPA', n0)
 
-for s in sims:
-    data = df.loc[df['sim'] == s, ['x', 'y']].to_numpy()
-    X = data[:,0]
-    Y = data[:,1]
-    results = pd.DataFrame(seq_kern_independence(X, Y, lmbd_type, n0),
-                           columns = ['martingale'])
-    results['l'] = l
-    results['sim'] = s
-    out.append(results)
-
-out = pd.concat(out)
-out.reset_index(inplace = True, drop = True)
-out_path = 'simulations_' + lmbd_type + '_' + str(n0) + '_' + task_id + '.csv'
-out.to_csv(out_path, sep = ',', index = False)
+    for i in range(1, len(ons)):
+        ons[i] = ons[i] * ons[i - 1]
+        agrapa[i] = agrapa[i] * agrapa[i - 1]
+    
+    print(max(ons))
+    print(max(agrapa))

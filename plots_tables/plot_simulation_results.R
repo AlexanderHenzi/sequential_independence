@@ -127,7 +127,7 @@ rejection_rates <- ggarrange(
   legend = "bottom"
 )
 
-pdf(file = "rejection_rates.pdf", width = 8, height = 6)
+pdf(file = "rejection_rates.pdf", width = 8, height = 5)
 print(rejection_rates)
 dev.off()
 

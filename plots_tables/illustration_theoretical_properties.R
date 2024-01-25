@@ -5,9 +5,9 @@ library(ggthemes)
 library(Rcpp)
 
 # load functions
-source("final_code/r_wrappers.R")
-source("final_code/simulation_examples.R")
-sourceCpp("final_code/sequential_tests.cpp")
+source("functions/r_wrappers.R")
+source("functions/simulation_examples.R")
+sourceCpp("functions/sequential_tests.cpp")
 
 # global parameters
 theme_set(theme_bw(base_size = 12))
@@ -296,3 +296,79 @@ pdf("count_grid_cells.pdf", width = 8, height = 4.25)
 print(count_grid_cells)
 dev.off()
 
+# different discretizations and kl divergence
+set.seed(1991)
+n <- 1e4
+ls <- c(1, 3, 5)
+ds <- c(2, 4, 8, 16)
+sims <- vector("list", length(ls))
+for (i in seq_along(ls)) {
+  sims_tmp <- sim_linear(n, ls[i])
+  sims_tmp$l <- ls[i]
+  sims[[i]] <- sims_tmp
+}
+sims <- do.call(rbind, sims)
+kl_estimates <- vector("list", length(ds))
+for (i in seq_along(ds)) {
+  grd <- seq(0, 1, length.out = ds[i] + 1)
+  kl_estimates[[i]] <- sims %>%
+    group_by(l) %>%
+    mutate(
+      x = ecdf(x)(x),
+      y = ecdf(y)(y),
+      x = cut(x, grd, include.lowest = TRUE),
+      y = cut(y, grd, include.lowest = TRUE)
+    ) %>%
+    group_by(l, x, y) %>%
+    summarise(q = length(x) / n) %>%
+    group_by(l) %>%
+    summarise(kl = sum(q * log(q * ds[i]^2), na.rm = TRUE)) %>%
+    mutate(d = ds[i]) %>%
+    arrange(l)
+}
+kl_estimates <- do.call(rbind, kl_estimates)
+
+n <- 10000
+mndl <- vector("list", length(ls))
+for (i in seq_along(ls)) {
+  data <- sim_linear(n = n, l = ls[i])
+  x <- data$x
+  y <- data$y
+  simple <- srt_simple(X = x, Y = y, d = d, n0 = n0)
+  fs <- unlist(simple[seq_along(ds)])
+  mndl[[i]] <- data.frame(
+    fnd = fs,
+    d = rep(ds, each = n),
+    l = ls[i],
+    index = rep(seq_len(n), length(ds))
+  )
+}
+mndl <- do.call(rbind, mndl)
+mndl <- mndl %>%
+  group_by(d, l) %>%
+  arrange(index) %>%
+  mutate(lfnd = cummean(log(fnd)))
+
+kl_growth_rate <- ggplot() +
+  geom_line(
+    data = mutate(mndl, d = factor(d), l = factor(l)),
+    aes(x = index, y = lfnd, color = d, group = d, linetype = d)
+  ) +
+  geom_hline(
+    data = mutate(kl_estimates, d = factor(d), l = factor(l)),
+    aes(yintercept = kl, color = d, group = d, linetype = d),
+    alpha = 0.75
+  ) +
+  scale_color_manual(values = colpal, labels = scales::parse_format()) +
+  scale_linetype_manual(values = c(5, 1, 4, 3)) +
+  facet_wrap(.~l, scales = "free_y") +
+  labs(
+    x = expression("Index"~italic(n)),
+    y = "KL-divergence, empirical growth rate"
+  ) +
+  theme_bw(base_size = 11) +
+  theme(legend.position = "none") 
+
+pdf("kl_growth_rate.pdf", width = 8, height = 3)
+print(kl_growth_rate)
+dev.off()

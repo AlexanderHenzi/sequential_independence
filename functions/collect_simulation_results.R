@@ -59,7 +59,7 @@ close(pb)
 results <- do.call(rbind, results)
 save(list = "results", file = "simulation_results.rda")
 
-# get results for comparison to non-sequential BET
+# get results for comparison to fixed-n methods
 ns <- c(128, 256, 512)
 tt <- c(9.17, 13.8, 16.9)
 
@@ -90,3 +90,5 @@ for (i in seq_len(M)) {
 close(pb)
 results <- do.call(rbind, results)
 save(list = "results", file = "simulations_comparison_bet.rda")
+
+# get results for illustration

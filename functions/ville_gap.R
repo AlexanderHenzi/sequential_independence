@@ -5,9 +5,9 @@ library(ggthemes)
 library(Rcpp)
 
 # load functions
-source("final_code/r_wrappers.R")
-source("final_code/simulation_examples.R")
-sourceCpp("final_code/sequential_tests.cpp")
+source("functions/r_wrappers.R")
+source("functions/simulation_examples.R")
+sourceCpp("functions/sequential_tests.cpp")
 
 # ggplot2 settings
 theme_set(theme_bw(base_size = 10))
@@ -82,3 +82,21 @@ freqs <- data %>%
   summarise(p005 = mean(p <= 0.05), t005 = 1/quantile(p, 0.05, type = 1))
 freqs
 freqs$p005
+
+# for illustration on real data
+size <- 128
+sinkhorn <- numeric(nsim)
+pb <- txtProgressBar(max = nsim)
+for (i in seq_len(nsim)) {
+  set.seed(i)
+  x <- runif(size)
+  y <- runif(size)
+  m_sinkhorn <- get_martingale(
+    srt_sinkhorn_random(x, y, d = c(2, 4)),
+    "product_mean"
+  )
+  sinkhorn[i] <- max(m_sinkhorn)
+  setTxtProgressBar(pb, i)
+}
+close(pb)
+quantile(sinkhorn, 0.95, type = 1)
